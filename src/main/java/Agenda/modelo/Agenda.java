@@ -44,11 +44,13 @@ public class Agenda {
   }
   
   //Verificar si contacto existe
-  public void contactExists (String name){
+  public boolean contactExists (String name){
     if (mapearContact.get(name) == null){
       System.out.println("El contacto no existe");
+      return false;
     } else{
       System.out.println("El contacto existe");
+      return true;
     }
     
   }
@@ -100,8 +102,10 @@ public class Agenda {
   }
   
   //Revisar cuántos contactos hay disponibles para agregar en agenda.
-  public void freeSpaces(){
+  public int freeSpaces(){
     System.out.printf("Tienes %d espacios disponibles para añadir contactos\n", getLimite()  - contactList.size());
+    return getLimite()  - contactList.size();
+    
   }
   
 }
