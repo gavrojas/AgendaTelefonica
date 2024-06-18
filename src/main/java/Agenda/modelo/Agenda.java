@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Agenda {
-  private List<Contact> contactList;
-  private Map<String, Integer> mapearContact = new HashMap<>();
+  private final List<Contact> contactList;
+  private final Map<String, Integer> mapearContact;
   private int limite;
   
   //Constructor
   public Agenda(){
     this.contactList = new ArrayList<>();
+    this.mapearContact = new HashMap<>();
   }
   
   //Métodos getter y setter
@@ -28,21 +29,26 @@ public class Agenda {
   
   //Añadir contacto
   public void addContact (Contact contact){
-    if (fullAgenda(getLimite()) == false && contactExists(contact) == false ){
+    if (contactList.size() < getLimite() && mapearContact.get(contact.getName()) == null ){
       contactList.add(contact);
       mapearContact.put(contact.getName(), contact.getPhone());
+      System.out.println("Contacto añadido exitosamente");
     } else{
-      System.out.println("No puedes añadir un nuevo contacto");
+      System.out.println("No puedes añadir un nuevo contacto, ");
+      if(contactList.size() >= getLimite()){
+        fullAgenda();
+      } else if (mapearContact.get(contact.getName()) != null) {
+        contactExists(contact.getName());
+      }
     }
   }
   
   //Verificar si contacto existe
-  public boolean contactExists (Contact contact){
-    if(mapearContact.containsKey(contact.getName())){
-      System.out.printf("\nEl contacto con nombre \"%s\" ya existe\n", contact.getName());
-      return true;
-    } else {
-      return false;
+  public void contactExists (String name){
+    if (mapearContact.get(name) == null){
+      System.out.println("El contacto no existe");
+    } else{
+      System.out.println("El contacto existe");
     }
     
   }
@@ -51,11 +57,13 @@ public class Agenda {
   public void listarContacts(){
     int i = 1;
     System.out.println("--------------------------------------");
+    System.out.println("\t\tAgenda telefónica");
+    System.out.println("--------------------------------------");
     for (Contact contact: contactList){
       System.out.printf("Contacto %d: nombre: %s, teléfono %d\n", i, contact.getName(), contact.getPhone());
       i++;
     }
-    System.out.println("--------------------------------------");
+    System.out.println("--------------------------------------------------");
   }
   
   //Buscar un contacto por su nombre
@@ -73,29 +81,27 @@ public class Agenda {
   }
   
   //Borrar un contacto
-  public void deleteContact(Contact contact){
-    if (contactExists(contact) == true ){
-      contactList.remove(contact);
-      mapearContact.remove(contact.getName(), contact.getPhone());
-      System.out.println("Constacto eliminado exitosamente");
-    } else{
-      System.out.println("No puedes eliminar este contacto, no existe");
+  public void deleteContact(String name){
+    boolean contactoDeleted = contactList.removeIf(contact -> contact.getName().equals(name));
+    if(contactoDeleted){
+      System.out.println("Contacto eliminado exitosamente.");
+    }else{
+      System.out.println("El contacto no existe, no lo puedes eliminar.");
     }
   }
   
   //Revisar si la agenda está llena
-  public boolean fullAgenda(int limite){
-    if( contactList.size() == limite){
+  public void fullAgenda(){
+    if( contactList.size() == getLimite()){
       System.out.println("La agenda se encuentra llena");
-      return true;
     } else{
-      return false;
+      freeSpaces();
     }
   }
   
   //Revisar cuántos contactos hay disponibles para agregar en agenda.
-  public int freeSpaces(int limite){
-    return limite - contactList.size();
+  public void freeSpaces(){
+    System.out.printf("Tienes %d espacios disponibles para añadir contactos\n", getLimite()  - contactList.size());
   }
   
 }

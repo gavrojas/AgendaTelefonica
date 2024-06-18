@@ -1,6 +1,7 @@
 package Agenda.modelo;
 
 public class Contact {
+  //Definición de variables
   private String name;
   private int phone;
   
